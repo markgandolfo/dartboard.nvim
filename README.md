@@ -68,16 +68,16 @@ You can disable these default keybindings by setting `use_default_keymaps = fals
 
 ```lua
 -- Add current file to marks
-vim.keymap.set('n', '<leader>ma', ':DartboardAdd<CR>', { desc = '[M]ark [A]dd file' })
+vim.keymap.set('n', '<leader>da', ':DartboardAdd<CR>', { desc = '[M]ark [A]dd file' })
 
 -- Remove current file from marks
-vim.keymap.set('n', '<leader>mr', ':DartboardRemove<CR>', { desc = '[M]ark [R]emove file' })
+vim.keymap.set('n', '<leader>dr', ':DartboardRemove<CR>', { desc = '[M]ark [R]emove file' })
 
 -- Show marked files in Telescope
-vim.keymap.set('n', '<leader>ms', ':DartboardShow<CR>', { desc = '[M]ark [S]how files' })
+vim.keymap.set('n', '<leader>dl', ':DartboardList<CR>', { desc = '[M]ark [S]how files' })
 
 -- Clear all marks
-vim.keymap.set('n', '<leader>mc', ':DartboardClear<CR>', { desc = '[M]ark [C]lear all' })
+vim.keymap.set('n', '<leader>dc', ':DartboardClear<CR>', { desc = '[M]ark [C]lear all' })
 
 -- Quick navigation to marks by index
 vim.keymap.set('n', '<leader>1', ':DartboardGoto1<CR>', { desc = 'Go to mark 1' })
@@ -91,7 +91,11 @@ vim.keymap.set('n', '<leader>5', ':DartboardGoto5<CR>', { desc = 'Go to mark 5' 
 
 When viewing your marked files with `:DartboardList`:
 - Press `Enter` to open the selected file
+- Press `Ctrl-v` to open in vertical split
+- Press `Ctrl-x` to open in horizontal split
 - Press `Ctrl-d` to remove the selected file from the list
+- Press `Ctrl-k` to move the selected file up in the list
+- Press `Ctrl-j` to move the selected file down in the list
 
 ## License
 

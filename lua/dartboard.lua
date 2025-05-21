@@ -1,5 +1,3 @@
--- A plugin to mark files and quickly access them, inspired by Harpoon and Lasso
-
 local M = {}
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
@@ -104,7 +102,11 @@ function M.clear_marks()
 end
 
 -- Show marks in Telescope
-function M.show_marks()
+function M.show_marks(opts)
+	opts = opts or {}
+	-- Track which file to select by path instead of by index
+	local selected_file = opts.selected_file
+
 	if #M.marks == 0 then
 		vim.notify("No marked files", vim.log.levels.INFO)
 		return
@@ -120,48 +122,125 @@ function M.show_marks()
 		})
 	end
 
-	pickers
-		.new({}, {
-			prompt_title = "Dartboard",
-			finder = finders.new_table({
-				results = items,
-				entry_maker = function(entry)
-					return {
-						value = entry,
-						display = entry.display,
-						ordinal = entry.display,
-					}
-				end,
-			}),
-			sorter = conf.generic_sorter({}),
-			attach_mappings = function(prompt_bufnr, map)
-				-- Open file on selection
-				actions.select_default:replace(function()
-					local selection = action_state.get_selected_entry()
-					actions.close(prompt_bufnr)
-					if selection and selection.value then
-						vim.cmd("edit " .. vim.fn.fnameescape(selection.value.value))
-					end
-				end)
+	-- Find the index of our selected file if provided
+	local selection_index = nil
+	if selected_file then
+		for i, entry in ipairs(items) do
+			if entry.value == selected_file then
+				selection_index = i
+				break
+			end
+		end
+	end
 
-				-- Remove file from list
-				map("i", "<C-d>", function()
-					local selection = action_state.get_selected_entry()
-					if selection and selection.value then
-						local index = selection.value.index
-						table.remove(M.marks, index)
+	-- Create options for Telescope
+	local telescope_opts = {
+		prompt_title = "Dartboard",
+		finder = finders.new_table({
+			results = items,
+			entry_maker = function(entry)
+				return {
+					value = entry,
+					display = entry.display,
+					ordinal = entry.display,
+				}
+			end,
+		}),
+		sorter = conf.generic_sorter({}),
+		-- Initial selection by index
+		default_selection_index = selection_index,
+		attach_mappings = function(prompt_bufnr, map)
+			-- Open file on selection
+			actions.select_default:replace(function()
+				local selection = action_state.get_selected_entry()
+				actions.close(prompt_bufnr)
+				if selection and selection.value then
+					vim.cmd("edit " .. vim.fn.fnameescape(selection.value.value))
+				end
+			end)
+
+			-- Open in vertical split (Ctrl+v)
+			actions.select_vertical:replace(function()
+				local selection = action_state.get_selected_entry()
+				actions.close(prompt_bufnr)
+				if selection and selection.value then
+					vim.cmd("vsplit " .. vim.fn.fnameescape(selection.value.value))
+				end
+			end)
+
+			-- Open in horizontal split (Ctrl+x)
+			actions.select_horizontal:replace(function()
+				local selection = action_state.get_selected_entry()
+				actions.close(prompt_bufnr)
+				if selection and selection.value then
+					vim.cmd("split " .. vim.fn.fnameescape(selection.value.value))
+				end
+			end)
+
+			-- Remove file from list
+			map("i", "<C-d>", function()
+				local selection = action_state.get_selected_entry()
+				if selection and selection.value then
+					local index = selection.value.index
+					table.remove(M.marks, index)
+					save_marks()
+
+					-- Refresh the picker
+					actions.close(prompt_bufnr)
+					M.show_marks()
+				end
+			end)
+
+			-- Move file up in the list
+			map("i", "<C-k>", function()
+				local selection = action_state.get_selected_entry()
+				if selection and selection.value then
+					local index = selection.value.index
+					if index > 1 then
+						-- Store file path for tracking
+						local file_path = selection.value.value
+
+						-- Swap with the item above
+						M.marks[index], M.marks[index - 1] = M.marks[index - 1], M.marks[index]
 						save_marks()
 
-						-- Refresh the picker
+						-- Refresh the picker with the file path to highlight
 						actions.close(prompt_bufnr)
-						M.show_marks()
+						M.show_marks({ selected_file = file_path })
+					else
+						vim.notify("Already at the top", vim.log.levels.INFO)
 					end
-				end)
+				end
+			end)
 
-				return true
-			end,
-		})
-		:find()
+			-- Move file down in the list
+			map("i", "<C-j>", function()
+				local selection = action_state.get_selected_entry()
+				if selection and selection.value then
+					local index = selection.value.index
+					if index < #M.marks then
+						-- Store file path for tracking
+						local file_path = selection.value.value
+
+						-- Swap with the item below
+						M.marks[index], M.marks[index + 1] = M.marks[index + 1], M.marks[index]
+						save_marks()
+
+						-- Refresh the picker with the file path to highlight
+						actions.close(prompt_bufnr)
+						M.show_marks({ selected_file = file_path })
+					else
+						vim.notify("Already at the bottom", vim.log.levels.INFO)
+					end
+				end
+			end)
+
+			return true
+		end,
+	}
+
+	-- Start the picker
+	pickers.new({}, telescope_opts):find()
 end
 
 -- Setup function
