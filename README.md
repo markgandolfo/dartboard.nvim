@@ -1,0 +1,98 @@
+# Dartboard.nvim
+
+A Neovim plugin to mark files and quickly access them, inspired by Harpoon and Lasso.
+
+## Features
+
+- Tag files to a list for quick access
+- View marked files in Telescope
+- Open files by index (1-9)
+- Remove files from the list
+- Clear the entire list
+- Persistent storage of marked files
+
+## Requirements
+
+- Neovim >= 0.7.0
+- Telescope.nvim
+
+## Installation
+
+### Using packer.nvim
+```lua
+use {
+  'markgandolfo/dartboard.nvim',
+  requires = {'nvim-telescope/telescope.nvim'}
+}
+```
+
+### Using lazy.nvim
+```lua
+{
+  'markgandolfo/dartboard.nvim',
+  dependencies = {'nvim-telescope/telescope.nvim'}
+}
+```
+
+## Setup
+
+```lua
+require('dartboard').setup({
+  -- use_default_keymaps = false,
+})
+```
+
+## Default Keybindings
+
+The plugin provides the following default keybindings:
+
+- `<leader>da` - Add current file to marks
+- `<leader>dr` - Remove current file from marks
+- `<leader>dl` - List marked files in Telescope
+- `<leader>dc` - Clear all marks
+- `<leader>1` through `<leader>5` - Go to mark by index
+
+You can disable these default keybindings by setting `use_default_keymaps = false` in the setup.
+
+## Usage
+
+### Commands
+
+- `:DartboardAdd` - Add current file to marks
+- `:DartboardRemove` - Remove current file from marks
+- `:DartboardClear` - Clear all marks
+- `:DartboardList` - List marks in Telescope
+- `:DartboardGoto1` to `:DartboardGoto9` - Go to mark by index
+
+### Recommended Keymaps
+
+```lua
+-- Add current file to marks
+vim.keymap.set('n', '<leader>ma', ':DartboardAdd<CR>', { desc = '[M]ark [A]dd file' })
+
+-- Remove current file from marks
+vim.keymap.set('n', '<leader>mr', ':DartboardRemove<CR>', { desc = '[M]ark [R]emove file' })
+
+-- Show marked files in Telescope
+vim.keymap.set('n', '<leader>ms', ':DartboardShow<CR>', { desc = '[M]ark [S]how files' })
+
+-- Clear all marks
+vim.keymap.set('n', '<leader>mc', ':DartboardClear<CR>', { desc = '[M]ark [C]lear all' })
+
+-- Quick navigation to marks by index
+vim.keymap.set('n', '<leader>1', ':DartboardGoto1<CR>', { desc = 'Go to mark 1' })
+vim.keymap.set('n', '<leader>2', ':DartboardGoto2<CR>', { desc = 'Go to mark 2' })
+vim.keymap.set('n', '<leader>3', ':DartboardGoto3<CR>', { desc = 'Go to mark 3' })
+vim.keymap.set('n', '<leader>4', ':DartboardGoto4<CR>', { desc = 'Go to mark 4' })
+vim.keymap.set('n', '<leader>5', ':DartboardGoto5<CR>', { desc = 'Go to mark 5' })
+```
+
+## Telescope Integration
+
+When viewing your marked files with `:DartboardList`:
+- Press `Enter` to open the selected file
+- Press `Ctrl-d` to remove the selected file from the list
+
+## License
+
+MIT
