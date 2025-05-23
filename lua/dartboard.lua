@@ -6,14 +6,29 @@ local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 
 -- Storage for marked files
+
+BASE_DARTBOARD_DIR = vim.fn.stdpath("data") .. "/dartboard/"
+MARK_FILE_PATH = BASE_DARTBOARD_DIR .. vim.fn.sha256(vim.fn.getcwd()) .. "-dartboard.json"
+
 M.marks = {}
 M.config = {
-	marks_file = vim.fn.stdpath("data") .. "/dartboard.json",
+	marks_file = MARK_FILE_PATH,
 }
+
+local function ensure_base_dir_exists()
+	if vim.fn.isdirectory(BASE_DARTBOARD_DIR) == 0 then
+		vim.fn.mkdir(BASE_DARTBOARD_DIR)
+	end
+end
+
+local function retrieve_mark_file(mode)
+	ensure_base_dir_exists()
+	return io.open(MARK_FILE_PATH, mode)
+end
 
 -- Save marks to disk
 local function save_marks()
-	local file = io.open(M.config.marks_file, "w")
+	local file = retrieve_mark_file("w")
 	if file then
 		file:write(vim.fn.json_encode(M.marks))
 		file:close()
@@ -22,7 +37,7 @@ end
 
 -- Load marks from disk
 local function load_marks()
-	local file = io.open(M.config.marks_file, "r")
+	local file = retrieve_mark_file("r")
 	if file then
 		local content = file:read("*all")
 		file:close()
