@@ -50,7 +50,7 @@ The plugin provides the following default keybindings:
 - `<leader>dr` - Remove current file from marks
 - `<leader>dl` - List marked files in Telescope
 - `<leader>dc` - Clear all marks
-- `<leader>1` through `<leader>5` - Go to mark by index
+- `<leader>1` through `<leader>9` - Go to mark by index
 
 You can disable these default keybindings by setting `use_default_keymaps = false` in the setup.
 
