@@ -5,11 +5,11 @@ A Neovim plugin to mark files and quickly access them, inspired by Harpoon and L
 ## Features
 
 - Tag files to a list for quick access
-- View marked files in Telescope
+- View tagged files in Telescope
 - Open files by index (1-9)
 - Remove files from the list
 - Clear the entire list
-- Persistent storage of marked files
+- Persistent storage of tagged files on a per-project basis
 
 ## Requirements
 
@@ -54,6 +54,16 @@ The plugin provides the following default keybindings:
 
 You can disable these default keybindings by setting `use_default_keymaps = false` in the setup.
 
+## Telescope Integration
+
+When viewing your marked files with `:DartboardList`:
+- Press `Enter` to open the selected file
+- Press `Ctrl-v` to open in vertical split
+- Press `Ctrl-x` to open in horizontal split
+- Press `Ctrl-d` to remove the selected file from the list
+- Press `Ctrl-k` to move the selected file up in the list
+- Press `Ctrl-j` to move the selected file down in the list
+
 ## Usage
 
 ### Commands
@@ -85,17 +95,9 @@ vim.keymap.set('n', '<leader>2', ':DartboardGoto2<CR>', { desc = 'Go to mark 2' 
 vim.keymap.set('n', '<leader>3', ':DartboardGoto3<CR>', { desc = 'Go to mark 3' })
 vim.keymap.set('n', '<leader>4', ':DartboardGoto4<CR>', { desc = 'Go to mark 4' })
 vim.keymap.set('n', '<leader>5', ':DartboardGoto5<CR>', { desc = 'Go to mark 5' })
+...
+vim.keymap.set('n', '<leader>9', ':DartboardGoto9<CR>', { desc = 'Go to mark 9' })
 ```
-
-## Telescope Integration
-
-When viewing your marked files with `:DartboardList`:
-- Press `Enter` to open the selected file
-- Press `Ctrl-v` to open in vertical split
-- Press `Ctrl-x` to open in horizontal split
-- Press `Ctrl-d` to remove the selected file from the list
-- Press `Ctrl-k` to move the selected file up in the list
-- Press `Ctrl-j` to move the selected file down in the list
 
 ## License
 
