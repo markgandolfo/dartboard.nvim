@@ -73,7 +73,11 @@ function M.add_file()
 
 	table.insert(M.marks, current_file)
 	save_marks()
-	vim.notify("File marked: " .. vim.fn.fnamemodify(current_file, ":t"), vim.log.levels.INFO)
+	local index = #M.marks
+	vim.notify(
+		"File marked at location #" .. index .. ": " .. vim.fn.fnamemodify(current_file, ":t"),
+		vim.log.levels.INFO
+	)
 end
 
 -- Remove file from marks
